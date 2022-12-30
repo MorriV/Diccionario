@@ -4,6 +4,9 @@
  */
 package diccionariov2;
 
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Mr_Floppa
@@ -29,12 +32,12 @@ public class Main extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txt = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tabla = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        consol = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -47,28 +50,30 @@ public class Main extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Analizador");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        txt.setColumns(20);
+        txt.setRows(5);
+        jScrollPane1.setViewportView(txt);
 
         jButton1.setText("Analizar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Indice", "Tipo", "Palabra", "Fila", "Columna"
             }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(tabla);
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane3.setViewportView(jTextArea2);
+        consol.setColumns(20);
+        consol.setRows(5);
+        jScrollPane3.setViewportView(consol);
 
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -129,6 +134,56 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    ArrayList<tabla> tb = new ArrayList();
+    Data analizer = new Data();
+    String consola = "";
+    
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String tkn[] = AnalizadorLexico(txt.getText());
+        tabla(tkn);
+        AnalizadorSintactico parce = new AnalizadorSintactico(tkn);
+        parce.AnalSintactico();
+        consol.setText(parce.getConsola());
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public void tabla(String[] tkn){
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+        modelo.setRowCount(0);
+        for(int i = 0; i < tkn.length ; i++){
+                modelo.addRow(new Object[]{(i+1),tb.get(i).getNumero(), tb.get(i).getNombre(), tb.get(i).getFila(), tb.get(i).getColumna()});
+            }
+    }
+    
+    public String[] AnalizadorLexico(String txt){
+        int fila = 0, columna = 0;
+        String kdena ="";
+        
+        String a = txt.replaceAll("\n", " ü ");
+        consola = consola + a + "\n";
+        consol.setText(consola);
+        
+        String[] aux = a.split(" ");
+        
+        for(String i:aux){
+            for(int j = 0; j < i.length(); j++){
+                if(i.equals("ü")){
+                    columna = 0;
+                    fila = fila + 1; 
+                }
+                columna = columna + 1;
+            }
+            tb.add(new tabla(analizer.RetornoT(i),i,fila,columna));
+            kdena = kdena + analizer.Retorno(i) + " ";
+        }
+        
+        consola = consola + kdena + "\n";
+        consol.setText(consola);
+        
+        String[] tokenaiser = kdena.split(" ");
+        
+        return tokenaiser;
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -165,6 +220,7 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea consol;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -172,8 +228,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTable tabla;
+    private javax.swing.JTextArea txt;
     // End of variables declaration//GEN-END:variables
 }
